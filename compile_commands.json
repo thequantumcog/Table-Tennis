@@ -1,0 +1,54 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-Wall",
+      "-c",
+      "-o",
+      "obj/game.o",
+      "src/game.cpp"
+    ],
+    "directory": "/home/ar0177417/PF-Final",
+    "file": "/home/ar0177417/PF-Final/src/game.cpp",
+    "output": "/home/ar0177417/PF-Final/obj/game.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-Wall",
+      "-c",
+      "-o",
+      "obj/main.o",
+      "src/main.cpp"
+    ],
+    "directory": "/home/ar0177417/PF-Final",
+    "file": "/home/ar0177417/PF-Final/src/main.cpp",
+    "output": "/home/ar0177417/PF-Final/obj/main.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-Wall",
+      "-c",
+      "-o",
+      "obj/menu.o",
+      "src/menu.cpp"
+    ],
+    "directory": "/home/ar0177417/PF-Final",
+    "file": "/home/ar0177417/PF-Final/src/menu.cpp",
+    "output": "/home/ar0177417/PF-Final/obj/menu.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-Wall",
+      "-c",
+      "-o",
+      "obj/score.o",
+      "src/score.cpp"
+    ],
+    "directory": "/home/ar0177417/PF-Final",
+    "file": "/home/ar0177417/PF-Final/src/score.cpp",
+    "output": "/home/ar0177417/PF-Final/obj/score.o"
+  }
+]
