@@ -1,28 +1,17 @@
-// TODO: Seprate Personal Index to argument i.e remove personal index from global variable
-// TODO: Seprate DB to a new file
-
-
-#include "main.hpp"
-
+//#include "main.hpp"
 using namespace std;
 
-const int maxLines = 100;
-const int sHistory = 10;
-const int sDigits = 10;
-const int containers = 3;
-const int containerSize = 50;
-const int lineSize = containers*containerSize;
+/*const int maxLines = 100;*/
+/*const int sHistory = 10;*/
+/*const int sDigits = 10;*/
+/*const int containers = 3;*/
+/*const int containerSize = 50;*/
+/*const int lineSize = containers*containerSize;*/
 
 int line = 1;
-char scoreData[maxLines][containers][containerSize];
-char scoreHistory[sHistory][sDigits];
 
 int PersonalIndex=0;
-
-void scoreCheckInput(State &gameState);
-void CompareScore();
-
-int ReadScore(){
+int ReadScore(char scoreData[maxLines][containers][containerSize]){
 
     ifstream readData("playerData");
 
@@ -41,8 +30,7 @@ int ReadScore(){
         }
         scoreData[0][1][i] = '\0';
 
-        while(!readData.eof()){
-            readData.getline(storeLine,lineSize);
+        while(readData.getline(storeLine,lineSize)){
             int col=0;
             int start = 0;
             // iterate over each char
@@ -63,18 +51,17 @@ int ReadScore(){
         }
 
     readData.close();
-    line--;
     return 0;
 
 }
-void WriteScore(){
-    ofstream writeData("playerData");
+void WriteScore(char scoreData[maxLines][containers][containerSize],char scoreHistory[sHistory][sDigits]){
+    ofstream writeData("playerData1");
     writeData << scoreData[0][1];
     writeData << "\n";
     for(int i=1;i<line;i++){
         for(int j=0;j<containers;j++){
             if(i==PersonalIndex && j==2){
-                for(int l=0;l<10;l++){
+                for(int i=0;i<10;i++){
                     writeData << scoreHistory[i];
                     writeData << ',';
                 }
@@ -102,7 +89,7 @@ int charToInteger(const char* str) {
 
     return result;
 }
-void CompareScore(){
+void CompareScore(char scoreData[maxLines][][]){
     int hiscore = charToInteger(scoreData[0][1]);
     int pb = charToInteger(scoreData[PersonalIndex][1]);
     int ns =  charToInteger(scoreHistory[0]);
@@ -148,59 +135,22 @@ int getPersonalIndex(char name[]){
             }
         }
         }
-    int i=0;
-    while(name[i] != '\0'){
-        scoreData[line][0][i] = name[i];
-        i++;
-    }
-    scoreData[line][1][0] = '0';
-    scoreData[line][1][1] = {'\0'};
-    line++;
-    return line-1;
+    return -1;
 }
 void parseHistory(){
     int start=0;
-    int pline=0;
+    int line=0;
     int j=0;
-    if(PersonalIndex != line-1){
     for(int i=0;scoreData[PersonalIndex][2][i] != '\0';i++){
         if(scoreData[PersonalIndex][2][i] == ','){
             for(j=0;j<i-start;j++){
-                scoreHistory[pline][j] = scoreData[PersonalIndex][2][j+start]; 
+                scoreHistory[line][j] = scoreData[PersonalIndex][2][j+start]; 
             }
-            scoreHistory[pline][j] = '\0';
-            pline++;
+            scoreHistory[line][j] = '\0';
+            line++;
             start = i+1;
 
         }
-    }
-}
-    else
-        for(int i=0;i<sHistory;i++){
-            scoreHistory[i][0] = '0';
-            scoreHistory[i][1] = '\0';
-    }
-
-}
-void ScoreMenu(State &gameState){
-    scoreCheckInput(gameState);
-    ClearBackground(RAYWHITE);
-    DrawText(TextFormat("High Score: "), 10, 50, 40, BLACK);
-    DrawText(scoreData[0][1], 10 + MeasureText("High Score: ", 40), 50, 40, BLACK);
-    if(PersonalIndex != -1){
-        DrawText("Perosnal Best: ", 10, 150, 40, BLACK);
-        DrawText(scoreData[PersonalIndex][1], 10 + MeasureText("Perosnal Best: ", 40), 150, 40, BLACK);
-        DrawText("Score History: ", 10, 250, 40, BLACK);
-        for(int i=0;i<10;i++){
-            DrawText(scoreHistory[i], 10, 300+(i*50), 40, BLACK);
-        }
-    }
-
-}
-
-void scoreCheckInput(State &gameState){
-    if(IsKeyPressed(KEY_BACKSPACE)){
-        gameState=MENU;
     }
 }
 void initializeDB(char name[]){

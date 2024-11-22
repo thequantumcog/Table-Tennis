@@ -18,6 +18,19 @@
       "-Wall",
       "-c",
       "-o",
+      "obj/input.o",
+      "src/input.cpp"
+    ],
+    "directory": "/home/ar0177417/PF-Final",
+    "file": "/home/ar0177417/PF-Final/src/input.cpp",
+    "output": "/home/ar0177417/PF-Final/obj/input.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-Wall",
+      "-c",
+      "-o",
       "obj/main.o",
       "src/main.cpp"
     ],

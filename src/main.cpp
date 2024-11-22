@@ -1,9 +1,8 @@
 #include "main.hpp"
-#include <raylib.h>
 
 int main() {
     int score =0;
-    int gameState =0; // NOTE: 0 = inMenu, 1 = inGame, 3 = scoreMenu
+    State gameState = INPUT; // NOTE: INPUT,MENU,GAME,SCOREMENU
 
     InitWindow(screenWidth, screenHeight, "Ping Pong!");
 
@@ -14,17 +13,20 @@ int main() {
 
     while (!WindowShouldClose() && !exitWindow) {
         BeginDrawing();
-        if(gameState == 0){
+        if(gameState == INPUT)
+            input(gameState);
+        else if(gameState == MENU){
             Menu(gameState,exitWindow);
         }
-        else if(gameState==1){
+        else if(gameState==GAME){
             beginGame(score,gameState);
         }
-        else if(gameState==3)
+        else if(gameState==SCOREMENU)
             ScoreMenu(gameState);
         EndDrawing();
     }
 
+    WriteScore();
     unloadResources();
     CloseWindow();  
 

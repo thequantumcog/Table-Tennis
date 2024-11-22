@@ -1,5 +1,4 @@
 #include "main.hpp"
-#include <raylib.h>
 
 const Color background = ColorFromHSV(0.12, 0.20, 0.20);
 const Color scoreColor = ColorFromHSV(191.25f, 0.9697f, 0.9059f);
@@ -14,10 +13,10 @@ double deltaTime = 0;
 double lasthit = 0.0;
 
 void checkCollision(Ball &ball, Paddle &paddle, int &score, double &lasthit);
-void takeInput(Paddle &paddle, Ball &ball, double &lasthit, double deltaTime, int &gameState);
+void takeInput(Paddle &paddle, Ball &ball, double &lasthit, double deltaTime, State &gameState);
 void drawGame(int &score);
 
-void beginGame(int &score, int &gameState) {
+void beginGame(int &score, State &gameState) {
     HideCursor();
     deltaTime = GetFrameTime();
 
@@ -36,6 +35,13 @@ void beginGame(int &score, int &gameState) {
                 gameover = 1;
                 ball = { { paddle.pos.x, paddle.pos.y }, { 500.0f, 0.0f }, 20.0f, PURPLE, 0 }; // pos, speed, radius, color, visible
             }
+        }
+    }
+    else{
+        if (IsKeyPressed(KEY_ENTER)){
+            ChangeScore(score);
+            gameover = 0;
+            score = 0;
         }
     }
     drawGame(score);
@@ -60,9 +66,9 @@ void checkCollision(Ball &ball, Paddle &paddle, int &score, double &lasthit) {
     }
 }
 
-void takeInput(Paddle &paddle, Ball &ball, double &lasthit, double deltaTime, int &gameState) {
+void takeInput(Paddle &paddle, Ball &ball, double &lasthit, double deltaTime, State &gameState) {
     if (IsKeyPressed(KEY_BACKSPACE)) {
-            gameState = 0;
+            gameState = MENU;
     }
     if (IsKeyDown(KEY_UP) && paddle.pos.y > wallSize + paddle.radius)
         paddle.pos.y -= paddle.speed * deltaTime;
@@ -79,21 +85,19 @@ void takeInput(Paddle &paddle, Ball &ball, double &lasthit, double deltaTime, in
 
 void drawGame(int &score) {
     ClearBackground(background);
-    DrawTexture(backgroundTexture, 15, 30, WHITE);
-    int fps = GetFPS();
-    DrawText(TextFormat("FPS: %i", fps), 10, 10, 20, DARKGRAY);
+
+
     if (!gameover) {
-        DrawTexture(paddleTexture, paddle.pos.x - 60.0f, paddle.pos.y - 60.0f, WHITE);
+        int fps = GetFPS();
+        DrawTexture(backgroundTexture, 15, 30, WHITE);
+        DrawText(TextFormat("FPS: %i", fps), 10, 10, 20, DARKGRAY);
+        DrawTexture(paddleTexture, paddle.pos.x - paddle.radius, paddle.pos.y - paddle.radius, WHITE);
         if (ball.thrown) {
             DrawTexture(ballTexture, ball.pos.x - ball.radius, ball.pos.y - ball.radius, WHITE);
             DrawText(TextFormat("%02d", score), screenWidth / 2.0f - 35, 25, 60, scoreColor);
         }
     } else {
-        score = 0;
         DrawText("GAME OVER!", screenWidth / 2.0f - MeasureText("GAME OVER!", 40)/2.0f, screenHeight / 2.0f - 15.0f, 40, RED);
-        if (IsKeyPressed(KEY_ENTER)) {
-            gameover = 0;
-        }
     }
 }
 

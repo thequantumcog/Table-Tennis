@@ -1,10 +1,11 @@
 #include "main.hpp"
+#include <raylib.h>
 
 MenuOption currentOption = START_GAME;
 void drawMenu();
-void menuInput(int &gameState, bool &exitWindow);
+void menuInput(State &gameState, bool &exitWindow);
 
-void Menu(int &gameState,bool &exitWindow){
+void Menu(State &gameState,bool &exitWindow){
         menuInput(gameState,exitWindow);
         drawMenu();
 }
@@ -25,23 +26,26 @@ void drawMenu(){
         DrawText("Scores", screenWidth / 2 - MeasureText("Scores", 30) / 2, 300, 30, scoresColor);
         DrawText("Exit", screenWidth / 2 - MeasureText("Exit", 30) / 2, 350, 30, exitColor);
 }
-void menuInput(int &gameState, bool &exitWindow){
+void menuInput(State &gameState, bool &exitWindow){
 
         if (IsKeyPressed(KEY_DOWN)) {
             currentOption = static_cast<MenuOption>((currentOption + 1) % TOTAL_OPTIONS);
         }
-        if (IsKeyPressed(KEY_UP)) {
+        else if (IsKeyPressed(KEY_UP)) {
             currentOption = static_cast<MenuOption>((currentOption + TOTAL_OPTIONS - 1) % TOTAL_OPTIONS);
         }
-        if (IsKeyPressed(KEY_ENTER)) {
+        else if (IsKeyPressed(KEY_BACKSPACE)){
+            gameState=INPUT;
+        }
+        else if (IsKeyPressed(KEY_ENTER)) {
             switch (currentOption) {
                 case START_GAME:
-                    gameState=1;
+                    gameState=GAME;
                     break;
                 case OPTIONS:
                     break;
                 case SCORES:
-                    gameState=3;
+                    gameState=SCOREMENU;
                     break;
                 case EXIT:
                     exitWindow = true;
