@@ -1,4 +1,5 @@
 #include "main.hpp"
+#include <raylib.h>
 
 int main() {
     int score =0;
@@ -26,7 +27,7 @@ int main() {
         EndDrawing();
     }
 
-    WriteScore();
+    writeScore();
     unloadResources();
     CloseWindow();  
 

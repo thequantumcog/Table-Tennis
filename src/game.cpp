@@ -1,10 +1,10 @@
 #include "main.hpp"
+#include <raylib.h>
 
 const Color background = ColorFromHSV(0.12, 0.20, 0.20);
 const Color scoreColor = ColorFromHSV(191.25f, 0.9697f, 0.9059f);
 const float wallSize = 45.0f;
 const float paddleRadius = 59.5f;
-Texture2D backgroundTexture, ballTexture, paddleTexture;
 
 bool gameover = 0;
 Paddle paddle = { { screenWidth - paddleRadius - wallSize, screenHeight / 2.0f }, 700.0f, 59.5f, BLACK, 0 }; // pos, size, speed, color, hit
@@ -38,10 +38,12 @@ void beginGame(int &score, State &gameState) {
         }
     }
     else{
+        static bool scoreAdded = 0;
+        if(!scoreAdded) {updateScore(score);     scoreAdded=1;}
         if (IsKeyPressed(KEY_ENTER)){
-            ChangeScore(score);
             gameover = 0;
             score = 0;
+            scoreAdded=0;
         }
     }
     drawGame(score);
@@ -69,6 +71,7 @@ void checkCollision(Ball &ball, Paddle &paddle, int &score, double &lasthit) {
 void takeInput(Paddle &paddle, Ball &ball, double &lasthit, double deltaTime, State &gameState) {
     if (IsKeyPressed(KEY_BACKSPACE)) {
             gameState = MENU;
+            ShowCursor();
     }
     if (IsKeyDown(KEY_UP) && paddle.pos.y > wallSize + paddle.radius)
         paddle.pos.y -= paddle.speed * deltaTime;
@@ -101,14 +104,3 @@ void drawGame(int &score) {
     }
 }
 
-void loadResources() {
-    backgroundTexture = LoadTexture("assets/background.png");
-    ballTexture = LoadTexture("assets/ball.png");
-    paddleTexture = LoadTexture("assets/paddle.png");
-}
-
-void unloadResources() {
-    UnloadTexture(ballTexture);
-    UnloadTexture(paddleTexture);
-    UnloadTexture(backgroundTexture);
-}

@@ -48,7 +48,7 @@ void input(State &gameState)
                 else
                     lowerName[i] = name[i];
             }
-            initializeDB(lowerName);
+            initDB(lowerName);
         }
         }
         else SetMouseCursor(MOUSE_CURSOR_DEFAULT);
@@ -58,6 +58,7 @@ void input(State &gameState)
 
     drawInput(textBox,mouseOnText,letterCount,framesCounter);
     }
+
 
 void drawInput(Rectangle &textBox,bool &mouseOnText,int &letterCount,int &framesCounter){
 
