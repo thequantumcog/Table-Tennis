@@ -1,33 +1,47 @@
 #include "main.hpp"
 #include <raylib.h>
 
-const Color background = ColorFromHSV(0.12, 0.20, 0.20);
-const Color scoreColor = ColorFromHSV(191.25f, 0.9697f, 0.9059f);
-const float wallSize = 45.0f;
-const float paddleRadius = 59.5f;
 
 bool gameover = 0;
+bool game_paused=0;
 Paddle paddle = { { screenWidth - paddleRadius - wallSize, screenHeight / 2.0f }, 700.0f, 59.5f, BLACK, 0 }; // pos, size, speed, color, hit
-Ball ball = { { paddle.pos.x, paddle.pos.y }, { 700.0f, 0.0f }, 20.0f, PURPLE, 0, 0 }; // pos, speed, radius, color, visible
+Ball ball = { { paddle.pos.x, paddle.pos.y }, BallSpeed, 20.0f, PURPLE, 0, 0 }; // pos, speed, radius, color, visible
 double deltaTime = 0;
 double lasthit = 0.0;
+bool scoreAdded = 0;
+bool alreadyPaused =0;
+bool moveSelector=0;
 
 void checkCollision(Ball &ball, Paddle &paddle, int &score, double &lasthit);
-void takeInput(Paddle &paddle, Ball &ball, double &lasthit, double deltaTime, State &gameState);
-void drawGame(int &score);
+void takeGameInput(Paddle &paddle, Ball &ball, double &lasthit, double deltaTime, State &gameState);
+void drawGame(int &score, State &gameState,bool &exitWindow);
+void beginGame(int &score, State &gameState,bool &exitWindow) {
+    if (IsKeyPressed(KEY_BACKSPACE)) {
+        if(!alreadyPaused){
+            game_paused = 1;
+            alreadyPaused=1;
+            ShowCursor();}
+        else{
+            game_paused=0;
+            alreadyPaused=0;
+            HideCursor();
 
-void beginGame(int &score, State &gameState) {
-    HideCursor();
+        }
+    }
     deltaTime = GetFrameTime();
 
-    if (!gameover) {
-        takeInput(paddle, ball, lasthit, deltaTime, gameState);
+    if (!gameover && !game_paused) {
+        takeGameInput(paddle, ball, lasthit, deltaTime, gameState);
         if (ball.thrown) {
             checkCollision(ball, paddle, score, lasthit);
-            if (ball.pos.x - (wallSize + ball.radius) <= 0)
+            if (ball.pos.x - (wallSize + ball.radius) <= 0){
                 ball.speed.x *= -1;
-            if (ball.pos.y - (wallSize + 10.0f + ball.radius) <= 0 || ball.pos.y + (wallSize + 10.0f + ball.radius) >= screenHeight)
+                PlaySound(hit);
+            }
+            if (ball.pos.y - (wallSize + 10.0f + ball.radius) <= 0 || ball.pos.y + (wallSize + 10.0f + ball.radius) >= screenHeight){
                 ball.speed.y *= -1;
+                PlaySound(hit2);
+            }
             ball.pos.y += ball.speed.y * deltaTime;
             ball.pos.x -= ball.speed.x * deltaTime;
             if (ball.pos.x > screenWidth + 100) { // 100 is added here to add a delay in gameover
@@ -37,16 +51,10 @@ void beginGame(int &score, State &gameState) {
             }
         }
     }
-    else{
-        static bool scoreAdded = 0;
+    else if(!game_paused && gameover){
         if(!scoreAdded) {updateScore(score);     scoreAdded=1;}
-        if (IsKeyPressed(KEY_ENTER)){
-            gameover = 0;
-            score = 0;
-            scoreAdded=0;
-        }
     }
-    drawGame(score);
+    drawGame(score, gameState,exitWindow);
 }
 
 void checkCollision(Ball &ball, Paddle &paddle, int &score, double &lasthit) {
@@ -60,6 +68,7 @@ void checkCollision(Ball &ball, Paddle &paddle, int &score, double &lasthit) {
     else
         paddle.hit = 0;
     if (paddle.hit) {
+        PlaySound(paddlesound);
         ball.speed.y = ((ball.pos.y - paddle.pos.y) / paddle.radius) * 500.0f; // amplify
         ball.speed.x *= -1;
         score++;
@@ -68,11 +77,7 @@ void checkCollision(Ball &ball, Paddle &paddle, int &score, double &lasthit) {
     }
 }
 
-void takeInput(Paddle &paddle, Ball &ball, double &lasthit, double deltaTime, State &gameState) {
-    if (IsKeyPressed(KEY_BACKSPACE)) {
-            gameState = MENU;
-            ShowCursor();
-    }
+void takeGameInput(Paddle &paddle, Ball &ball, double &lasthit, double deltaTime, State &gameState) {
     if (IsKeyDown(KEY_UP) && paddle.pos.y > wallSize + paddle.radius)
         paddle.pos.y -= paddle.speed * deltaTime;
     if (IsKeyDown(KEY_DOWN) && paddle.pos.y + wallSize < screenHeight - paddle.radius)
@@ -80,17 +85,18 @@ void takeInput(Paddle &paddle, Ball &ball, double &lasthit, double deltaTime, St
 
     if (IsKeyPressed(KEY_SPACE) && !ball.thrown) {
         ball.pos.y = paddle.pos.y;
+        ball.speed.x = BallSpeed.x;
+        ball.speed.y = GetRandomValue(-500, 500);
         ball.thrown = 1;
         ball.canCollide = 0;
         lasthit = GetTime();
     }
 }
 
-void drawGame(int &score) {
+void drawGame(int &score,State &gameState,bool &exitWindow) {
     ClearBackground(background);
+    
 
-
-    if (!gameover) {
         int fps = GetFPS();
         DrawTexture(backgroundTexture, 15, 30, WHITE);
         DrawText(TextFormat("FPS: %i", fps), 10, 10, 20, DARKGRAY);
@@ -99,8 +105,41 @@ void drawGame(int &score) {
             DrawTexture(ballTexture, ball.pos.x - ball.radius, ball.pos.y - ball.radius, WHITE);
             DrawText(TextFormat("%02d", score), screenWidth / 2.0f - 35, 25, 60, scoreColor);
         }
-    } else {
-        DrawText("GAME OVER!", screenWidth / 2.0f - MeasureText("GAME OVER!", 40)/2.0f, screenHeight / 2.0f - 15.0f, 40, RED);
+     if(gameover) {
+        DrawTexture(nameplate, screenWidth/2.0f-270, screenHeight/2.0f-170, WHITE);
+        DrawText("GAME OVER!", screenWidth / 2.0f - MeasureText("GAME OVER!", 40)/2.0f, screenHeight / 2.0f - 150.0f, 50, YELLOW);
+        DrawText("Play Again?", screenWidth / 2.0f - MeasureText("Play Again?", 40)/2.0f, screenHeight / 2.0f - 50.0f, 50, RED);
+        DrawText("Yes", screenWidth / 2.0f - MeasureText("Yes", 40)/2.0f- 100.0f, screenHeight / 2.0f + 50.0f, 50, BLACK);
+        DrawText("NO", screenWidth / 2.0f + MeasureText("No", 40)/2.0f+ 100.0f, screenHeight / 2.0f + 50.0f, 50, BLACK);
+
+        if(IsKeyPressed(KEY_RIGHT)){ 
+            if(!moveSelector) moveSelector=1;
+            else moveSelector=0;}
+        if(IsKeyPressed(KEY_LEFT)){
+            if(moveSelector) moveSelector=0;
+            else moveSelector=1;}
+
+        if(!moveSelector)
+            DrawTexture(selector,screenWidth / 2.0f - MeasureText("Yes", 40)/2.0f- 150.0f, screenHeight / 2.0f + 55.0f,WHITE);
+        else
+            DrawTexture(selector,screenWidth / 2.0f + MeasureText("No", 40)/2.0f+ 50.0f, screenHeight / 2.0f + 55.0f,WHITE);
+        if(IsKeyPressed(KEY_ENTER)){
+                    paddle = { { screenWidth - paddleRadius - wallSize, screenHeight / 2.0f }, 700.0f, 59.5f, BLACK, 0 }; // pos, size, speed, color, hit
+                    ball = { { paddle.pos.x, paddle.pos.y }, { 500.0f, 0.0f }, 20.0f, PURPLE, 0 }; // pos, speed, radius, color, visible
+                    score =0;
+                    scoreAdded=0;
+            if(moveSelector){
+                exitWindow=true;
+            }
+            else{
+                    /*paddle = { { screenWidth - paddleRadius - wallSize, screenHeight / 2.0f }, 700.0f, 59.5f, BLACK, 0 }; // pos, size, speed, color, hit*/
+                    /*ball = { { paddle.pos.x, paddle.pos.y }, { 500.0f, 0.0f }, 20.0f, PURPLE, 0 }; // pos, speed, radius, color, visible*/
+                    /*score =0;*/
+                    gameover = 0;
+                    /*scoreAdded=0;*/
+            }
+        }
     }
+    if(game_paused && !gameover) drawPauseMenu(gameState,game_paused,score,ball,paddle,exitWindow);
 }
 
