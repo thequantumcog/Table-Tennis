@@ -11,12 +11,12 @@ Rectangle PbtnBounds[] = {
 };
 
 
-int PbtnStates[4] = { 0 };       // Button states: 0-NORMAL, 1-MOUSE_HOVER, 2-PRESSED
+int PbtnStates[3] = { 0 };       // Button states: 0-NORMAL, 1-MOUSE_HOVER, 2-PRESSED
 
 Vector2 mousePPoint = { 0.0f, 0.0f };
 
 bool PbtnActions[4] = { false }; // Button actions
-void drawPauseMenu(State &gameState, bool &game_paused,int &score,Ball &ball,Paddle &paddle,bool &exitWindow){
+void drawPauseMenu(State &gameState, bool &gamePaused,int &score,Ball &ball,Paddle &paddle,bool &exitWindow){
 
     DrawTexture(board, screenWidth/2.0f-360, screenHeight/2.0f-360, WHITE);
     handleMenu(PbtnActions,btnTextures,PbtnStates, PbtnBounds, PkeyboardUsed, CurPSelection,1);
@@ -26,13 +26,13 @@ void drawPauseMenu(State &gameState, bool &game_paused,int &score,Ball &ball,Pad
         if (PbtnActions[i]) {
             switch (i) {
                 case 0: // Play button
-                    game_paused=0;
+                    gamePaused=0;
                     break;
                 case 1: 
                     paddle = { { screenWidth - paddleRadius - wallSize, screenHeight / 2.0f }, 700.0f, 59.5f, BLACK, 0 }; // pos, size, speed, color, hit
                     ball = { { paddle.pos.x, paddle.pos.y }, { 500.0f, 0.0f }, 20.0f, PURPLE, 0 }; // pos, speed, radius, color, visible
                     score =0;
-                    game_paused=0;
+                    gamePaused=0;
                     break;
                 case 2: 
                     gameState = MENU;

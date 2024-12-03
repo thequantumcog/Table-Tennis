@@ -15,18 +15,18 @@ int btnStates[4] = { 0 };       // Button states: 0-NORMAL, 1-MOUSE_HOVER, 2-PRE
 bool btnActions[4] = { false }; // Button actions
 bool keyboardUsed=0;
 
+bool isInputAllowed=0;
 Texture2D btnTextures[] = { btn_play, btn_options, btn_score, btn_exit };
-void menuInput(State &gameState, bool &exitWindow) {
+void Menu(State &gameState, bool &exitWindow) {
     SetMouseCursor(MOUSE_CURSOR_DEFAULT);
     DrawTexture(background_wood, 0, 0, WHITE);
     DrawTexture(board, screenWidth/2.0f - 360, 230, WHITE);
-    handleMenu(btnActions, btnTextures, btnStates, btnBounds, keyboardUsed, CurSelection, 0);
+    if(IsKeyReleased(KEY_BACKSPACE))
+        gameState = INPUT;
 
-    static double delay = GetTime(),ready=0;
-    if(GetTime() - delay > 0.2)
-        ready=1;
+    handleMenu(btnActions, btnTextures, btnStates, btnBounds, keyboardUsed, CurSelection, 0);
     for (int i = 0; i < 4; i++) {
-        if (btnActions[i] && ready) {
+        if (btnActions[i]) {
             switch (i) {
                 case 0: // Play button
                     gameState = GAME;
@@ -44,11 +44,6 @@ void menuInput(State &gameState, bool &exitWindow) {
         }
     }
 }
-
-void Menu(State &gameState, bool &exitWindow) {
-    menuInput(gameState, exitWindow);
-}
-
 void handleMenu(bool * btnActions,Texture2D * btnTextures,int *btnStates,Rectangle * btnBounds,bool &keyboardUsed,int &CurSelection,bool menuType){
         Vector2 mousePoint = GetMousePosition();
 

@@ -2,7 +2,7 @@
 #include <raylib.h>
 Texture2D leaderboard,nameplate,board,backgroundTexture, ballTexture, paddleTexture,background_wood;
 Texture2D btn_newgame,btn_options,btn_play,btn_score,btn_exit,btn_continue,btn_menu;
-Texture2D selector;
+Texture2D selector,savesettings;
 Sound hit,hit2,paddlesound;
 Font font;
 void loadResources() {
@@ -21,6 +21,7 @@ void loadResources() {
     leaderboard = LoadTexture("assets/leaderboard.png");
     nameplate = LoadTexture("assets/name.png");
     selector = LoadTexture("assets/selector.png");
+    savesettings = LoadTexture("assets/save.png");
     hit = LoadSound("assets/hit.mp3");
     hit2 = LoadSound("assets/hit2.mp3");
     paddlesound = LoadSound("assets/paddle.mp3");
@@ -43,6 +44,7 @@ void unloadResources() {
     UnloadTexture(leaderboard);  
     UnloadTexture(nameplate);  
     UnloadTexture(selector);  
+    UnloadTexture(savesettings);  
     UnloadSound(hit);
     UnloadSound(hit2);
     UnloadSound(paddlesound);

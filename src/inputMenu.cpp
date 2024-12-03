@@ -1,60 +1,59 @@
 #include "main.hpp"
 #define MAX_INPUT_CHARS 30
 
-char name[MAX_INPUT_CHARS + 1] = "\0";      
-char lowerName[MAX_INPUT_CHARS + 1] = "\0";      
+std::string name = "";
+int backspaceHoldCounter = 0;
 int framesCounter = 0;
-int letterCount = 0;
 bool mouseOnText = false;
 Rectangle textBox = { screenWidth/2.0f - 150, screenHeight/2.0f-100, 300, 50 };
 
-
-void drawInput(Rectangle &textBox,bool &mouseOnText,int &letterCount,int &framesCounter);
-void input(State &gameState)
+bool isWhitespace(std::string s);
+void drawInput(Rectangle &textBox,bool &mouseOnText,int &framesCounter);
+void inputMenu(State &gameState)
 {
     if (CheckCollisionPointRec(GetMousePosition(), textBox)) mouseOnText = true;
     else mouseOnText = false;
-
     if (mouseOnText)
     {
         SetMouseCursor(MOUSE_CURSOR_IBEAM);
-
         int key = GetCharPressed();
-
         while (key > 0)
         {
             // NOTE: Only allow keys in range [32..125]
-            if ((key >= 32) && (key <= 125) && (letterCount < MAX_INPUT_CHARS))
+            if ((key >= 32) && (key <= 125) && (name.size() < MAX_INPUT_CHARS))
             {
-                name[letterCount] = (char)key;
-                name[letterCount+1] = '\0'; // Add null terminator at the end of the string.
-                letterCount++;
+                name += (char)key;
             }
-
             key = GetCharPressed();  // Check next character in the queue
         }
 
-        static int backspaceHoldCounter = 0;
+        // Backspace removes char plus hold removes all logic
         if (IsKeyDown(KEY_BACKSPACE))
         {
             backspaceHoldCounter++;
             if(backspaceHoldCounter ==1 || (backspaceHoldCounter> 10 && backspaceHoldCounter % 2 == 0)){
-                letterCount--;
-                if (letterCount < 0) letterCount = 0;
-                name[letterCount] = '\0';
+                if(!name.empty())
+                    name.resize(name.size()-1);
             }
         }
         else
             backspaceHoldCounter=0;
-        if(IsKeyPressed(KEY_ENTER) && letterCount >=1){
-            gameState = MENU;
-            for(int i=0;i<letterCount;i++){
-                if(name[i] >= 'A' && name[i] <= 'Z')
-                    lowerName[i] = name[i] + 32;
-                else
-                    lowerName[i] = name[i];
+
+        if(IsKeyReleased(KEY_ENTER)){
+            if(name.empty() || isWhitespace(name))
+                name = "Anonymus";
+            else{
+                name[0] = toupper(name[0]);
+                for(int i=1;i<name.size();i++){
+                    if(i-1>0 && name[i-1] == ' '){
+                        name[i] = toupper(name[i]);
+                    }
+                    else
+                    name[i] = tolower(name[i]);
+                }
             }
-            initDB(lowerName);
+            readScore();
+            gameState = MENU;
         }
     }
     else SetMouseCursor(MOUSE_CURSOR_DEFAULT);
@@ -62,11 +61,10 @@ void input(State &gameState)
     if (mouseOnText) framesCounter++;
     else framesCounter = 0;
 
-    drawInput(textBox,mouseOnText,letterCount,framesCounter);
+    drawInput(textBox,mouseOnText,framesCounter);
 }
 
-
-void drawInput(Rectangle &textBox,bool &mouseOnText,int &letterCount,int &framesCounter){
+void drawInput(Rectangle &textBox,bool &mouseOnText,int &framesCounter){
 
 
     DrawTexture(background_wood, 0, 0, WHITE);
@@ -79,18 +77,23 @@ void drawInput(Rectangle &textBox,bool &mouseOnText,int &letterCount,int &frames
     if (mouseOnText) DrawRectangleLines((int)textBox.x, (int)textBox.y, (int)textBox.width, (int)textBox.height, BROWN);
     else DrawRectangleLines((int)textBox.x, (int)textBox.y, (int)textBox.width, (int)textBox.height, DARKGRAY);
 
-    DrawText(name, (int)textBox.x + 5, (int)textBox.y + 8, 40, DARKBROWN);
-
+    DrawText(name.c_str(), (int)textBox.x + 5, (int)textBox.y + 8, 40, DARKBROWN);
 
     if (mouseOnText)
     {
-        if (letterCount < MAX_INPUT_CHARS)
+        if (name.size() < MAX_INPUT_CHARS)
         {
             // Draw blinking underscore char
-            if (((framesCounter/20)%2) == 0) DrawText("_", (int)textBox.x + 8 + MeasureText(name, 40), (int)textBox.y + 12, 40, DARKBROWN);
+            if (((framesCounter/20)%2) == 0) DrawText("_", (int)textBox.x + 8 + MeasureText(name.c_str(), 40), (int)textBox.y + 12, 40, DARKBROWN);
         }
         else DrawText("Press BACKSPACE to delete chars...", screenWidth/2.0f - 170, screenHeight/2.0f, 20, GRAY);
     }
 
 }
-
+bool isWhitespace(std::string s){
+    for(int index = 0; index < s.length(); index++){
+        if(!std::isspace(s[index]))
+            return false;
+    }
+    return true;
+}

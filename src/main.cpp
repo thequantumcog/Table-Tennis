@@ -14,7 +14,7 @@ int main() {
     while (!WindowShouldClose() && !exitWindow) {
         BeginDrawing();
         if(gameState == INPUT)
-            input(gameState);
+            inputMenu(gameState);
         else if(gameState == MENU){
             Menu(gameState,exitWindow);
         }

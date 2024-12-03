@@ -1,36 +1,32 @@
 #include "main.hpp"
-#include <raylib.h>
-
 
 bool gameover = 0;
-bool game_paused=0;
+bool gamePaused=0;
+bool scoreAdded = 0;
 Paddle paddle = { { screenWidth - paddleRadius - wallSize, screenHeight / 2.0f }, 700.0f, 59.5f, BLACK, 0 }; // pos, size, speed, color, hit
 Ball ball = { { paddle.pos.x, paddle.pos.y }, BallSpeed, 20.0f, PURPLE, 0, 0 }; // pos, speed, radius, color, visible
 double deltaTime = 0;
 double lasthit = 0.0;
-bool scoreAdded = 0;
-bool alreadyPaused =0;
 bool moveSelector=0;
 
 void checkCollision(Ball &ball, Paddle &paddle, int &score, double &lasthit);
 void takeGameInput(Paddle &paddle, Ball &ball, double &lasthit, double deltaTime, State &gameState);
 void drawGame(int &score, State &gameState,bool &exitWindow);
+// START
 void beginGame(int &score, State &gameState,bool &exitWindow) {
     if (IsKeyPressed(KEY_BACKSPACE)) {
-        if(!alreadyPaused){
-            game_paused = 1;
-            alreadyPaused=1;
+        if(!gamePaused){
+            gamePaused = 1;
             ShowCursor();}
         else{
-            game_paused=0;
-            alreadyPaused=0;
+            gamePaused=0;
             HideCursor();
 
         }
     }
     deltaTime = GetFrameTime();
 
-    if (!gameover && !game_paused) {
+    if (!gameover && !gamePaused) {
         takeGameInput(paddle, ball, lasthit, deltaTime, gameState);
         if (ball.thrown) {
             checkCollision(ball, paddle, score, lasthit);
@@ -51,7 +47,7 @@ void beginGame(int &score, State &gameState,bool &exitWindow) {
             }
         }
     }
-    else if(!game_paused && gameover){
+    else if(!gamePaused && gameover){
         if(!scoreAdded) {updateScore(score);     scoreAdded=1;}
     }
     drawGame(score, gameState,exitWindow);
@@ -96,7 +92,6 @@ void takeGameInput(Paddle &paddle, Ball &ball, double &lasthit, double deltaTime
 void drawGame(int &score,State &gameState,bool &exitWindow) {
     ClearBackground(background);
     
-
         int fps = GetFPS();
         DrawTexture(backgroundTexture, 15, 30, WHITE);
         DrawText(TextFormat("FPS: %i", fps), 10, 10, 20, DARKGRAY);
@@ -123,23 +118,20 @@ void drawGame(int &score,State &gameState,bool &exitWindow) {
             DrawTexture(selector,screenWidth / 2.0f - MeasureText("Yes", 40)/2.0f- 150.0f, screenHeight / 2.0f + 55.0f,WHITE);
         else
             DrawTexture(selector,screenWidth / 2.0f + MeasureText("No", 40)/2.0f+ 50.0f, screenHeight / 2.0f + 55.0f,WHITE);
-        if(IsKeyPressed(KEY_ENTER)){
-                    paddle = { { screenWidth - paddleRadius - wallSize, screenHeight / 2.0f }, 700.0f, 59.5f, BLACK, 0 }; // pos, size, speed, color, hit
-                    ball = { { paddle.pos.x, paddle.pos.y }, { 500.0f, 0.0f }, 20.0f, PURPLE, 0 }; // pos, speed, radius, color, visible
-                    score =0;
-                    scoreAdded=0;
+        if(IsKeyReleased(KEY_ENTER)){
+                paddle = { { screenWidth - paddleRadius - wallSize, screenHeight / 2.0f }, 700.0f, 59.5f, BLACK, 0 }; // pos, size, speed, color, hit
+                ball = { { paddle.pos.x, paddle.pos.y }, { 500.0f, 0.0f }, 20.0f, PURPLE, 0 }; // pos, speed, radius, color, visible
+                score =0;
+                scoreAdded=0;
             if(moveSelector){
-                exitWindow=true;
+                gameState=MENU;
+                gameover = 0;
             }
             else{
-                    /*paddle = { { screenWidth - paddleRadius - wallSize, screenHeight / 2.0f }, 700.0f, 59.5f, BLACK, 0 }; // pos, size, speed, color, hit*/
-                    /*ball = { { paddle.pos.x, paddle.pos.y }, { 500.0f, 0.0f }, 20.0f, PURPLE, 0 }; // pos, speed, radius, color, visible*/
-                    /*score =0;*/
                     gameover = 0;
-                    /*scoreAdded=0;*/
             }
         }
     }
-    if(game_paused && !gameover) drawPauseMenu(gameState,game_paused,score,ball,paddle,exitWindow);
+    if(gamePaused && !gameover) drawPauseMenu(gameState,gamePaused,score,ball,paddle,exitWindow);
 }
 

@@ -5,7 +5,6 @@
 #include "raylib.h"
 #include <string>
 #include <fstream>
-#include <iostream>
 
 
 const Color background = ColorFromHSV(0.12, 0.20, 0.20);
@@ -41,28 +40,28 @@ typedef struct Paddle{
         bool hit;
 } Paddle;
 
-// Shenanigans
+extern std::string name;
 
-extern Texture2D board,leaderboard,nameplate, backgroundTexture, ballTexture, paddleTexture,background_wood;
-extern Texture2D btn_newgame,btn_options,btn_play,btn_score,btn_exit,btn_menu,btn_continue;
-extern Font font;
+
 const int PBCapacity = 100;
 const int containers = 2;
 extern int pbIndex;
 extern std::string playerBest[PBCapacity][containers]; 
-extern Texture2D btnTextures[4],selector;
+extern Texture2D board,leaderboard,nameplate, backgroundTexture, ballTexture, paddleTexture,background_wood;
+extern Texture2D btn_newgame,btn_options,btn_play,btn_score,btn_exit,btn_menu,btn_continue;
+extern Texture2D btnTextures[4],selector,savesettings;
+extern Font font;
 extern Sound hit,hit2,paddlesound;
 
 //Function Declaration
 void loadResources();
 void unloadResources();
 void beginGame(int &score,State &gameState,bool &exitWindow);
-void ScoreMenu(State &gameState);
 void Menu(State &gameState,bool &exitWindow);
 void options(State &gameState);
-void input(State &gameState);
-void drawPauseMenu(State &gameState, bool &game_paused,int &score, Ball &ball,Paddle &paddle,bool &exitWindow);
-void initDB(char lowerName[]);
+void ScoreMenu(State &gameState);
+void inputMenu(State &gameState);
+void drawPauseMenu(State &gameState, bool &gamePaused,int &score, Ball &ball,Paddle &paddle,bool &exitWindow);
 void handleMenu(bool * btnActions,Texture2D * btnTextures,int *btnStates,Rectangle * btnBounds,bool &keyboardUsed,int &CurSelection,bool menuType);
 void readScore();
 void writeScore();

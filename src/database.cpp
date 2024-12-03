@@ -1,20 +1,12 @@
 #include "main.hpp"
-#include <cctype>
-
 using namespace std;
-
 
 string playerBest[PBCapacity][containers]; 
 int pbIndex =0;
-string lname;
-void initDB(char lowerName[]){
-    readScore();
-    lname = string(lowerName);
 
-}
 void readScore(){
     string storeLine = "";
-    ifstream read("playerData");
+    ifstream read(STORAGE_DATA_FILE);
     pbIndex=0;
     while(getline(read,storeLine)){
 
@@ -33,7 +25,7 @@ void readScore(){
     }
 }
 void writeScore(){
-    ofstream write("playerData");
+    ofstream write(STORAGE_DATA_FILE);
     int j=0;
     for(int i=0;i<pbIndex;i++){
         for(j=0;j<2;j++){
@@ -49,7 +41,7 @@ void updateScore(int score){
         pbIndex++;
     for(int i=0;i<pbIndex;i++){
         if(pbIndex == 1|| playerBest[i][0].empty()){
-            playerBest[i][0] = lname;
+            playerBest[i][0] = name;
             playerBest[i][1] = to_string(score);
 
         }
@@ -58,10 +50,9 @@ void updateScore(int score){
                 playerBest[j][0] = playerBest[j-1][0];
                 playerBest[j][1] = playerBest[j-1][1];
             }
-            playerBest[i][0] = lname;
+            playerBest[i][0] = name;
             playerBest[i][1] = to_string(score);
                 break;
         }
     }
-    
 }
