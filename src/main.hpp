@@ -16,7 +16,6 @@ extern Vector2 BallSpeed;
 enum paddleColor {PRED,PBLUE};
 extern paddleColor pC;
 
-extern bool scoreRead;
 
 #define NUM_FRAMES  3       // Number of frames (rectangles) for the button sprite texture
 
