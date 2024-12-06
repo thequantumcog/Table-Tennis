@@ -6,6 +6,6 @@
 * Core Logic
 * There is a branch with multiple balls mode
 
-!(name screen)[screenshots/name.png]
+![name screen](https://raw.githubusercontent.com/thequantumcog/Table-Tennis/master/screenshots/name.png)
 
-!(multiple balls)[screenshots/multiple.png]
+![Multiple Balls](https://raw.githubusercontent.com/thequantumcog/Table-Tennis/master/screenshots/multiple.png)
