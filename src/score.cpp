@@ -45,7 +45,7 @@ Vector2 calculateScorePosition(int index, const Vector2& scoreSize) {
     }
 }
 void scoreCheckInput(State &gameState) {
-    if (IsKeyPressed(KEY_BACKSPACE)) {
+    if (IsKeyReleased(KEY_BACKSPACE)) {
         gameState = MENU;
     }
 }

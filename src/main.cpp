@@ -10,6 +10,7 @@ int main() {
     ToggleFullscreen();
     SetTargetFPS(60);
     bool exitWindow = false;
+    readScore();
 
     while (!WindowShouldClose() && !exitWindow) {
         BeginDrawing();

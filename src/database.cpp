@@ -23,6 +23,7 @@ void readScore(){
         }
         pbIndex++;
     }
+    scoreRead=1;
 }
 void writeScore(){
     ofstream write(STORAGE_DATA_FILE);

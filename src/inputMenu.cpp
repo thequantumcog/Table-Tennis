@@ -20,7 +20,7 @@ void inputMenu(State &gameState)
         while (key > 0)
         {
             // NOTE: Only allow keys in range [32..125]
-            if ((key >= 32) && (key <= 125) && (name.size() < MAX_INPUT_CHARS))
+            if ((key >= 32) && (key <= 125) && (key != 59)&& (name.size() < MAX_INPUT_CHARS))
             {
                 name += (char)key;
             }
@@ -41,7 +41,7 @@ void inputMenu(State &gameState)
 
         if(IsKeyReleased(KEY_ENTER)){
             if(name.empty() || isWhitespace(name))
-                name = "Anonymus";
+                name = "Anonymous";
             else{
                 name[0] = toupper(name[0]);
                 for(int i=1;i<name.size();i++){
@@ -52,7 +52,7 @@ void inputMenu(State &gameState)
                     name[i] = tolower(name[i]);
                 }
             }
-            readScore();
+            /*readScore();*/
             gameState = MENU;
         }
     }

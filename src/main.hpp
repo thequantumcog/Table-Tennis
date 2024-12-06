@@ -13,6 +13,10 @@ const float wallSize = 45.0f;
 const float paddleRadius = 59.5f;
 
 extern Vector2 BallSpeed;
+enum paddleColor {PRED,PBLUE};
+extern paddleColor pC;
+
+extern bool scoreRead;
 
 #define NUM_FRAMES  3       // Number of frames (rectangles) for the button sprite texture
 
@@ -47,9 +51,9 @@ const int PBCapacity = 100;
 const int containers = 2;
 extern int pbIndex;
 extern std::string playerBest[PBCapacity][containers]; 
-extern Texture2D board,leaderboard,nameplate, backgroundTexture, ballTexture, paddleTexture,background_wood;
+extern Texture2D board,leaderboard,nameplate, backgroundTexture, ballTexture, paddleTexture,paddleblue,paddlered,background_wood;
 extern Texture2D btn_newgame,btn_options,btn_play,btn_score,btn_exit,btn_menu,btn_continue;
-extern Texture2D btnTextures[4],selector,savesettings;
+extern Texture2D btnTextures[4],selector,selected,savesettings;
 extern Font font;
 extern Sound hit,hit2,paddlesound;
 

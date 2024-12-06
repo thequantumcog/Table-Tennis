@@ -9,11 +9,18 @@ double deltaTime = 0;
 double lasthit = 0.0;
 bool moveSelector=0;
 
+
 void checkCollision(Ball &ball, Paddle &paddle, int &score, double &lasthit);
 void takeGameInput(Paddle &paddle, Ball &ball, double &lasthit, double deltaTime, State &gameState);
 void drawGame(int &score, State &gameState,bool &exitWindow);
 // START
 void beginGame(int &score, State &gameState,bool &exitWindow) {
+
+    if(pC == PRED)
+        paddleTexture = paddlered;
+    else
+        paddleTexture = paddleblue;
+
     if (IsKeyPressed(KEY_BACKSPACE)) {
         if(!gamePaused){
             gamePaused = 1;
